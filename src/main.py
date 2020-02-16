@@ -55,15 +55,28 @@ class Simulation:
                 agent.next_location = island_id
 
     def _run_epidemics(self):
+        fi_hist = []
+        fr_hist = []
+        population_hist = []
+
         for t in range(10000):
             # それぞれの島の人口と感染者比率を計算
             infected_fraction = np.zeros(len(self.topology.nodes))
+            recovered_fraction = np.zeros(len(self.topology.nodes))
             island_population = np.zeros(len(self.topology.nodes))
             for agent in self.agents:
                 island_population[agent.location] += 1
                 if agent.state == HealthState.INFECTED:
                     infected_fraction[agent.location] += 1
+                elif agent.state == HealthState.RECOVERD:
+                    recovered_fraction[agent.location] += 1
             infected_fraction /= island_population
+            recovered_fraction /= island_population
+
+            # 途中経過を記録
+            fi_hist.append(infected_fraction)
+            fr_hist.append(recovered_fraction)
+            population_hist.append(island_population)
 
             # 感染者がいなければ島ごとに累積感染者比率を計算して終了する
             if np.sum(infected_fraction) == 0:
@@ -74,6 +87,10 @@ class Simulation:
 
                 FES /= island_population
                 print(f"Finished calculation at time {t} with Final Epidemic Size: {FES}")
+                print(f"Population of each island: {island_population}")
+                np.savetxt("result/infected_fraction_hist.csv", fi_hist, delimiter=',')
+                np.savetxt("result/recovered_fraction_hist.csv", fr_hist, delimiter=',')
+                np.savetxt("result/population_hist.csv", population_hist, delimiter=',')
                 break
 
             # 状態遷移と移動
@@ -115,7 +132,7 @@ average_degree = 4
 num_initial_infected_agent = 1
 beta = 0.833
 gamma = 0.33
-m = 0.1
+m = 0.2
 
 simulation = Simulation(
     num_agent=num_agent,
