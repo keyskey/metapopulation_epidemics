@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "corona_simulation"
+name = "metapopulation_epidemics"
 version = "0.1.0"
-description = "SIR model based epidemic simulation for evaluating the effect of isolation policy"
+description = "Agent based epidemic simulation code for evaluating the effect of isolation policy"
 authors = ["Keisuke Nagashima <energyrevo21@gmail.com>"]
 license = "MIT"
 
